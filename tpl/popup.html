@@ -1,0 +1,121 @@
+<load target="./popup.js" />
+<load target="./popup.css" />
+<load target="../lang" />
+
+<div class="x_modal-header">
+	<h1>{$component_info->title} ver. {$component_info->version}</h1>
+</div>
+
+<form action="./" method="get" onSubmit="return false" id="fo">
+	<div id="popBody">
+		<table cellspacing="0" class="adminTable">
+			<col width="110" />
+			<col />
+
+			<!-- 버전 -->
+			<tr>
+				<th scope="row">{$lang->folding_ver}</th>
+				<td>
+					<div class="row-inline">
+						<input type="text" id="folding_ver" class="inputTypeText" style="width:65px;" placeholder="1.0" />
+						<span class="opt-sep"></span>
+						<label class="opt-label">버전색상:</label>
+						<div class="color-wrap">
+							<input type="color" id="folding_ver_color" value="#2980b9" class="color-picker" />
+							<input type="text" id="folding_ver_color_hex" class="inputTypeText hex-input" value="#2980b9" placeholder="#2980b9" maxlength="7" />
+						</div>
+					</div>
+					<div class="row-inline mt6">
+						<label class="opt-label">{$lang->folding_ver_date}:</label>
+						<input type="date" id="folding_ver_date" class="inputTypeText" style="width:140px;" />
+					</div>
+				</td>
+			</tr>
+
+			<!-- 마커색상 -->
+			<tr>
+				<th scope="row">▶ 마커색상</th>
+				<td>
+					<div class="row-inline">
+						<label class="opt-label">summary ▶ 색상:</label>
+						<div class="color-wrap">
+							<input type="color" id="folding_marker_color" value="#ff6600" class="color-picker" />
+							<input type="text" id="folding_marker_color_hex" class="inputTypeText hex-input" value="#ff6600" placeholder="#ff6600" maxlength="7" />
+						</div>
+						<span class="hint">접기/펼치기 화살표 색상</span>
+					</div>
+				</td>
+			</tr>
+
+			<!-- 배경색 -->
+			<tr>
+				<th scope="row">■ 배경색상</th>
+				<td>
+					<div class="row-inline">
+						<label class="opt-label">details 배경색:</label>
+						<div class="color-wrap">
+							<input type="color" id="folding_bg_color" value="#f9f9f9" class="color-picker" />
+							<input type="text" id="folding_bg_color_hex" class="inputTypeText hex-input" value="#f9f9f9" placeholder="#f9f9f9" maxlength="7" />
+						</div>
+						<span class="hint">접기/펼치기 박스 배경 색상</span>
+					</div>
+				</td>
+			</tr>
+
+			<!-- 배지 -->
+			<tr>
+				<th scope="row">{$lang->folding_badge}</th>
+				<td>
+					<div class="row-inline">
+						<label class="badge-option"><input type="checkbox" class="badge-check" value="최신" /> 최신</label>
+						<label class="badge-option"><input type="checkbox" class="badge-check" value="신규" /> 신규</label>
+						<label class="badge-option"><input type="checkbox" class="badge-check" value="버그수정" /> 버그수정</label>
+						<label class="badge-option"><input type="checkbox" class="badge-check" value="기능추가" /> 기능추가</label>
+						<label class="badge-option"><input type="checkbox" class="badge-check" value="개선" /> 개선</label>
+						<label class="badge-option"><input type="checkbox" class="badge-check" value="첫버전" /> 첫버전</label>
+						<label class="badge-option"><input type="checkbox" class="badge-check" value="수정파일만 제공" /> 수정파일만 제공</label>
+					</div>
+					<div class="row-inline mt6">
+						<label class="opt-label">직접입력:</label>
+						<input type="text" id="badge_custom" class="inputTypeText" style="width:160px;" placeholder="직접입력" />
+					</div>
+				</td>
+			</tr>
+
+			<!-- 기본 열림 상태 -->
+			<tr>
+				<th scope="row">{$lang->folding_default_open}</th>
+				<td>
+					<div class="row-inline">
+						<label><input type="radio" name="default_open" value="Y" checked="checked" /> {$lang->folding_open_yes}</label>
+						<label><input type="radio" name="default_open" value="N" /> {$lang->folding_open_no}</label>
+					</div>
+				</td>
+			</tr>
+
+			<!-- 항목 목록 -->
+			<tr>
+				<th scope="row">{$lang->folding_items}</th>
+				<td>
+					<button type="button" id="btn-add-item" onclick="addFoldingItem()">+ {$lang->folding_add_item}</button>
+					<div id="item-list"></div>
+				</td>
+			</tr>
+
+			<!-- 미리보기 -->
+			<tr>
+				<th scope="row">{$lang->folding_preview}</th>
+				<td>
+					<div id="preview-area"></div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="x_clearfix btnArea">
+		<div class="x_pull-right">
+			<a href="#" onclick="insertFolding()"><button type="button" class="x_btn x_btn-primary">{$lang->cmd_insert}</button></a>
+			<a href="#" onclick="window.close(); return false;"><button type="button" class="x_btn">{$lang->cmd_close}</button></a>
+		</div>
+	</div>
+</form>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component version="0.1">
+	<title xml:lang="ko">MH 접기/펼치기 박스</title>
+	<title xml:lang="en">MH Folding Box</title>
+	<version>0.4</version>
+	<date>2026-06-29</date>
+	<author email_address="80san@moonhouse.co.kr" link="https://moonhouse.co.kr">
+		<name xml:lang="ko">팔공산</name>
+		<name xml:lang="en">80san</name>
+		<description xml:lang="ko">에디터에서 접기/펼치기 박스를 만들 수 있습니다. 버전 배지(최신/버그수정 등)와 소제목, 내용을 포함한 변경이력 스타일의 박스를 삽입합니다.</description>
+		<description xml:lang="en">Creates a folding box in the editor. Inserts a changelog-style box with version badges, subtitles, and descriptions.</description>
+	</author>
+</component>
