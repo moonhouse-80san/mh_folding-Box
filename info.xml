@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component version="0.1">
+<component version="0.4">
 	<title xml:lang="ko">MH 접기/펼치기 박스</title>
 	<title xml:lang="en">MH Folding Box</title>
 	<version>0.4</version>
