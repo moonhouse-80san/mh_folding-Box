@@ -8,13 +8,26 @@ var drag_src = null;
 var sub_drag_src = null;
 
 /* ── 항목(folding-item) Drag & Drop ── */
-var S_NEW        = 'font-size:.8em;color:#999;border:1px solid #ddd;padding:3px 6px;border-radius:5px;margin-left:6px;';
-var S_NEW_LATEST = 'font-size:.8em;color:#fff;background:#222;border:1px solid #222;padding:3px 6px;border-radius:5px;margin-left:6px;';
-var S_BUG  = 'font-size:.8em;color:#999;border:1px solid #ddd;padding:3px 6px;border-radius:5px;margin-right:5px;';
-var S_SUB  = 'font-size:.9em;color:#555;font-weight:500 !important;';
-var S_SUM  = 'font-size:.85em;color:#666;';
-var S_DATE = 'font-size:.85em;color:#444;';
-var S_TSUB = 'font-size:.9em;color:#666;margin-left:1.5em;'; 
+/* 폰트 크기 정규식: 14px, 1.2em, .85em, 100%, 12pt 형식만 허용 */
+var FONT_SIZE_RE = /^\d+(\.\d+)?(px|em|rem|%|pt)$/;
+function isValidFontSize(val) {
+	return FONT_SIZE_RE.test(String(val || '').trim());
+}
+function getSizeValue(id) {
+	var el = xGetElementById(id);
+	if (!el) return '';
+	var v = el.value.trim();
+	return isValidFontSize(v) ? v : '';
+}
+
+/* ── 스타일 생성 함수: 팝업에서 입력한 폰트 크기(size)가 있으면 사용, 없으면 기본값 ── */
+function styleBadgeNew(size)       { return 'font-size:' + (size || '.8em')  + ';color:#999;border:1px solid #ddd;padding:3px 6px;border-radius:5px;margin-left:6px;'; }
+function styleBadgeNewLatest(size) { return 'font-size:' + (size || '.8em')  + ';color:#fff;background:#222;border:1px solid #222;padding:3px 6px;border-radius:5px;margin-left:6px;'; }
+function styleBadgeBug(size)       { return 'font-size:' + (size || '.8em')  + ';color:#999;border:1px solid #ddd;padding:3px 6px;border-radius:5px;margin-right:5px;'; }
+function styleSub(size)            { return 'font-size:' + (size || '.9em')  + ';color:#555;font-weight:500 !important;'; }
+function styleSum(size)            { return 'font-size:' + (size || '.85em') + ';color:#666;'; }
+function styleDate(size)           { return 'font-size:' + (size || '.85em') + ';color:#444;'; }
+function styleTsub(size)           { return 'font-size:' + (size || '.9em')  + ';color:#666;margin-left:1.5em;'; }
 
 function makeDetailsStyle(bgColor) {
 	return 'border:1px solid #ddd;background:' + (bgColor || '#f9f9f9') + ';padding:10px;border-radius:5px;margin:0 10px;';
@@ -62,6 +75,20 @@ function bindColorPair(pickerId, hexId) {
 	hex.addEventListener('blur', function() {
 		if (!isValidHex(hex.value)) hex.value = picker.value;
 		updatePreview();
+	});
+}
+
+/* 폰트 크기 입력(14px, 1.2em 등): 입력 중엔 미리보기 갱신, blur 시 형식이 틀리면 빨간 테두리로 표시 */
+function bindSizeInput(id) {
+	var el = xGetElementById(id);
+	if (!el) return;
+	el.addEventListener('input', function() {
+		el.style.borderColor = '';
+		updatePreview();
+	});
+	el.addEventListener('blur', function() {
+		var v = el.value.trim();
+		el.style.borderColor = (v && !isValidFontSize(v)) ? '#c00' : '';
 	});
 }
 
@@ -297,6 +324,14 @@ function removeFoldingItem(seq) {
 
 /* ── HTML 생성 ── */
 function buildItemsHtml() {
+	var badgeSize = getSizeValue('folding_badge_size');
+	var subSize   = getSizeValue('folding_sub_size');
+	var sumSize   = getSizeValue('folding_sum_size');
+	var bugStyle  = styleBadgeBug(badgeSize);
+	var subStyle  = styleSub(subSize);
+	var sumStyle  = styleSum(sumSize);
+	var tsubStyle = styleTsub(sumSize);
+
 	var html = '';
 	document.querySelectorAll('#item-list > .folding-item').forEach(function(wrap) {
 		var id    = wrap.id.replace('item_', '');
@@ -306,12 +341,12 @@ function buildItemsHtml() {
 
 		html += '<div style="margin-bottom:6px;">';
 		html += '\u2022 ';
-		if (badge) html += '<span style="' + S_BUG + '">' + escText(badge) + '</span>';
+		if (badge) html += '<span style="' + bugStyle + '">' + escText(badge) + '</span>';
 		if (sub) {
-			html += '<span style="' + S_SUB + '">' + escText(sub) + '</span>';
-			html += ' - <span style="' + S_SUM + '">' + escText(sum) + '</span>';
+			html += '<span style="' + subStyle + '">' + escText(sub) + '</span>';
+			html += ' - <span style="' + sumStyle + '">' + escText(sum) + '</span>';
 		} else {
-			html += '<span style="' + S_SUM + '">' + escText(sum) + '</span>';
+			html += '<span style="' + sumStyle + '">' + escText(sum) + '</span>';
 		}
 		html += '</div>';
 
@@ -322,7 +357,7 @@ function buildItemsHtml() {
 				var sid = row.id.replace('subrow_', '');
 				var txt = xGetElementById('item_sum_' + sid).value;
 				html += '<div style="margin-bottom:4px;margin-left:1.5em;">'
-					+ '<span style="' + S_TSUB + '">' + escText(txt) + '</span>'
+					+ '<span style="' + tsubStyle + '">' + escText(txt) + '</span>'
 					+ '</div>';
 			});
 		}
@@ -330,16 +365,17 @@ function buildItemsHtml() {
 	return html;
 }
 
-function buildSummaryHtml(ver, ver_date_display, badge, verColor) {
-	var S_VER = 'font-weight:bold;color:' + (verColor || '#2980b9') + ';';
+function buildSummaryHtml(ver, ver_date_display, badge, verColor, verSize, dateSize, badgeSize) {
+	var S_VER = 'font-size:' + (verSize || '1em') + ';font-weight:bold;color:' + (verColor || '#2980b9') + ';';
+	var dateStyle = styleDate(dateSize);
 	var html = '';
 	if (ver)              html += '<span style="' + S_VER + '">Ver ' + escText(ver) + '</span>';
-	if (ver_date_display) html += '<span style="' + S_DATE + '"> - ' + escText(ver_date_display) + '</span>';
+	if (ver_date_display) html += '<span style="' + dateStyle + '"> - ' + escText(ver_date_display) + '</span>';
 	if (badge) {
 		badge.split(',').forEach(function(b) {
 			b = b.trim();
 			if (b) {
-				var s = (b === '최신') ? S_NEW_LATEST : S_NEW;
+				var s = (b === '최신') ? styleBadgeNewLatest(badgeSize) : styleBadgeNew(badgeSize);
 				html += '<span style="' + s + '">' + escText(b) + '</span>';
 			}
 		});
@@ -357,6 +393,9 @@ function updatePreview() {
 	var badge        = getBadgeValue();
 	var def_open     = document.querySelector('input[name="default_open"]:checked');
 	var open_attr    = (def_open && def_open.value === 'Y') ? ' open' : '';
+	var ver_size     = getSizeValue('folding_ver_size');
+	var date_size    = getSizeValue('folding_date_size');
+	var badge_size   = getSizeValue('folding_badge_size');
 
 	var marker_style = '<style>'
 		+ '#preview-area details summary{list-style:none;}'
@@ -366,7 +405,7 @@ function updatePreview() {
 
 	var html = marker_style
 		+ '<details style="' + makeDetailsStyle(bg_color) + '"' + open_attr + '>'
-		+ '<summary>' + buildSummaryHtml(ver, ver_date_disp, badge, ver_color) + '</summary>'
+		+ '<summary>' + buildSummaryHtml(ver, ver_date_disp, badge, ver_color, ver_size, date_size, badge_size) + '</summary>'
 		+ '<div style="margin-top:12px;margin-left:5px">'
 		+ (buildItemsHtml() || '<em style="color:#aaa">항목을 추가하세요</em>')
 		+ '</div></details>';
@@ -387,6 +426,11 @@ function buildFoldingHTML(orig_node) {
 	var open_attr    = default_open === 'Y' ? ' open' : '';
 	var summary_style= 'color:' + marker_color + ';';
 	var body_html    = '';
+	var ver_size     = getSizeValue('folding_ver_size');
+	var date_size    = getSizeValue('folding_date_size');
+	var badge_size   = getSizeValue('folding_badge_size');
+	var sub_size     = getSizeValue('folding_sub_size');
+	var sum_size     = getSizeValue('folding_sum_size');
 
 	if (orig_node) {
 		var orig_content = orig_node.querySelector(':scope > div');
@@ -440,9 +484,14 @@ function buildFoldingHTML(orig_node) {
 		+ ' bg_color="' + escText(bg_color) + '"'
 		+ ' badge="' + escText(badge) + '"'
 		+ ' default_open="' + default_open + '"'
+		+ ' ver_size="' + escText(ver_size) + '"'
+		+ ' date_size="' + escText(date_size) + '"'
+		+ ' badge_size="' + escText(badge_size) + '"'
+		+ ' sub_size="' + escText(sub_size) + '"'
+		+ ' sum_size="' + escText(sum_size) + '"'
 		+ open_attr + '>'
 		+ '<summary style="' + summary_style + '">'
-		+ buildSummaryHtml(ver, ver_date_disp, badge, ver_color)
+		+ buildSummaryHtml(ver, ver_date_disp, badge, ver_color, ver_size, date_size, badge_size)
 		+ '</summary>'
 		+ '<div style="margin-top:12px;margin-left:5px">' + body_html + '</div>'
 		+ '</details>';
@@ -496,6 +545,12 @@ function getFolding() {
 	xGetElementById('folding_marker_color_hex').value = mc;
 	xGetElementById('folding_bg_color').value         = bc;
 	xGetElementById('folding_bg_color_hex').value     = bc;
+
+	xGetElementById('folding_ver_size').value   = node.getAttribute('ver_size')   || '';
+	xGetElementById('folding_date_size').value  = node.getAttribute('date_size')  || '';
+	xGetElementById('folding_badge_size').value = node.getAttribute('badge_size') || '';
+	xGetElementById('folding_sub_size').value   = node.getAttribute('sub_size')   || '';
+	xGetElementById('folding_sum_size').value   = node.getAttribute('sum_size')   || '';
 
 	var badge    = node.getAttribute('badge')        || '';
 	var def_open = node.getAttribute('default_open') || 'Y';
@@ -604,6 +659,7 @@ function getFolding() {
 		['folding_ver','folding_ver_date','badge_custom'].forEach(function(id) {
 			xGetElementById(id).addEventListener('input', updatePreview);
 		});
+		['folding_ver_size','folding_date_size','folding_badge_size','folding_sub_size','folding_sum_size'].forEach(bindSizeInput);
 		xGetElementById('item-list').addEventListener('dragover', function(e) { e.preventDefault(); });
 
 		var node = (typeof opener !== 'undefined' && opener) ? opener.editorPrevNode : null;

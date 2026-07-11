@@ -30,6 +30,14 @@
 						<label class="opt-label">{$lang->folding_ver_date}:</label>
 						<input type="date" id="folding_ver_date" class="inputTypeText" style="width:140px;" />
 					</div>
+					<div class="row-inline mt6">
+						<label class="opt-label">{$lang->folding_size_ver}:</label>
+						<input type="text" id="folding_ver_size" class="inputTypeText size-input" placeholder="1em" />
+						<span class="opt-sep"></span>
+						<label class="opt-label">{$lang->folding_size_date}:</label>
+						<input type="text" id="folding_date_size" class="inputTypeText size-input" placeholder=".85em" />
+						<span class="hint">{$lang->folding_size_hint}</span>
+					</div>
 				</td>
 			</tr>
 
@@ -79,6 +87,26 @@
 					<div class="row-inline mt6">
 						<label class="opt-label">직접입력:</label>
 						<input type="text" id="badge_custom" class="inputTypeText" style="width:160px;" placeholder="직접입력" />
+					</div>
+					<div class="row-inline mt6">
+						<label class="opt-label">{$lang->folding_size_badge}:</label>
+						<input type="text" id="folding_badge_size" class="inputTypeText size-input" placeholder=".8em" />
+						<span class="hint">{$lang->folding_size_hint}</span>
+					</div>
+				</td>
+			</tr>
+
+			<!-- 항목 텍스트 크기 -->
+			<tr>
+				<th scope="row">{$lang->folding_font_size}</th>
+				<td>
+					<div class="row-inline">
+						<label class="opt-label">{$lang->folding_size_sub}:</label>
+						<input type="text" id="folding_sub_size" class="inputTypeText size-input" placeholder=".95em" />
+						<span class="opt-sep"></span>
+						<label class="opt-label">{$lang->folding_size_sum}:</label>
+						<input type="text" id="folding_sum_size" class="inputTypeText size-input" placeholder=".85em" />
+						<span class="hint">{$lang->folding_size_hint} (내용/Sub내용 공통 적용)</span>
 					</div>
 				</td>
 			</tr>

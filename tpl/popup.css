@@ -60,6 +60,14 @@ body { font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Malgun 
 	font-family: monospace;
 }
 
+/* 폰트 크기 입력(14px, 1.2em 등) */
+.size-input {
+	width: 60px !important;
+	font-size: 12px !important;
+	padding: 3px 5px !important;
+	font-family: monospace;
+}
+
 .inputTypeText {
 	border: 1px solid #ccc;
 	border-radius: 3px;

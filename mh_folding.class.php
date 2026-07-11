@@ -27,6 +27,12 @@
 			return preg_match('/^#[0-9a-fA-F]{3,6}$/', $color) ? $color : $default;
 		}
 
+		/* 14px, 1.2em, .85em, 100%, 12pt 형식만 허용. 값이 없거나 형식이 틀리면 빈 문자열(기본 CSS 크기 사용) */
+		private function safeFontSize(string $size): string {
+			$size = trim($size);
+			return preg_match('/^\d+(\.\d+)?(px|em|rem|%|pt)$/', $size) ? $size : '';
+		}
+
 		public function transHTML($xml_obj): string {
 			$ver          = $xml_obj->attrs->ver          ?? '';
 			$ver_date     = $xml_obj->attrs->ver_date     ?? '';
@@ -37,25 +43,36 @@
 			$default_open = $xml_obj->attrs->default_open ?? 'Y';
 			$items        = $xml_obj->body                ?? '';
 
+			/* 폰트 크기 (팝업에서 14px, 1.2em 등으로 입력) */
+			$ver_size     = $this->safeFontSize($xml_obj->attrs->ver_size   ?? '');
+			$date_size    = $this->safeFontSize($xml_obj->attrs->date_size  ?? '');
+			$badge_size   = $this->safeFontSize($xml_obj->attrs->badge_size ?? '');
+			$sub_size     = $this->safeFontSize($xml_obj->attrs->sub_size   ?? '');
+			$sum_size     = $this->safeFontSize($xml_obj->attrs->sum_size   ?? '');
+
 			$open_attr = ($default_open === 'Y') ? ' open' : '';
 
-			/* 버전/날짜 표시 (색상만 동적, 나머지는 mh_folding.css 클래스로 처리) */
+			/* 버전/날짜 표시 (색상 + 폰트 크기 동적, 나머지는 mh_folding.css 클래스로 처리) */
 			$ver_display = '';
 			if ($ver) {
-				$ver_display .= '<span class="mh_folding_ver" style="color:' . $ver_color . ';">Ver ' . htmlspecialchars($ver, ENT_QUOTES) . '</span>';
+				$ver_style = 'color:' . $ver_color . ';';
+				if ($ver_size) $ver_style = 'font-size:' . $ver_size . ';' . $ver_style;
+				$ver_display .= '<span class="mh_folding_ver" style="' . $ver_style . '">Ver ' . htmlspecialchars($ver, ENT_QUOTES) . '</span>';
 			}
 			if ($ver_date) {
-				$ver_display .= '<span class="mh_folding_date">' . htmlspecialchars($ver_date, ENT_QUOTES) . '</span>';
+				$date_style = $date_size ? ' style="font-size:' . $date_size . ';"' : '';
+				$ver_display .= '<span class="mh_folding_date"' . $date_style . '>' . htmlspecialchars($ver_date, ENT_QUOTES) . '</span>';
 			}
 
 			/* 배지 표시 */
 			$badge_html = '';
 			if ($badge) {
+				$badge_style = $badge_size ? ' style="font-size:' . $badge_size . ';"' : '';
 				foreach (explode(',', $badge) as $b) {
 					$b = trim($b);
 					if ($b === '') continue;
 					$badge_class = ($b === '최신') ? 'mh_folding_badge_new_latest' : 'mh_folding_badge_new';
-					$badge_html .= '<span class="' . $badge_class . '">' . htmlspecialchars($b, ENT_QUOTES) . '</span>';
+					$badge_html .= '<span class="' . $badge_class . '"' . $badge_style . '>' . htmlspecialchars($b, ENT_QUOTES) . '</span>';
 				}
 			}
 
@@ -98,6 +115,20 @@
 				$items = preg_replace('/<br\s*\/?>/', '</div>', $items);
 			}
 
+			/* 항목 내 폰트 크기 오버라이드 (클래스는 유지, style만 추가) */
+			if ($badge_size) {
+				$items = preg_replace('/<span class="mh_folding_badge_bug">/', '<span class="mh_folding_badge_bug" style="font-size:' . $badge_size . ';">', $items);
+			}
+			if ($sub_size) {
+				$items = preg_replace('/<span class="mh_folding_sub">/', '<span class="mh_folding_sub" style="font-size:' . $sub_size . ';">', $items);
+				$items = preg_replace('/<strong class="mh_folding_sub">/', '<strong class="mh_folding_sub" style="font-size:' . $sub_size . ';">', $items);
+			}
+			if ($sum_size) {
+				/* '내용' 크기는 소제목 없는 요약문(sum)과 Sub내용(tsub)에 공통 적용 */
+				$items = preg_replace('/<span class="mh_folding_sum">/', '<span class="mh_folding_sum" style="font-size:' . $sum_size . ';">', $items);
+				$items = preg_replace('/<span class="mh_folding_tsub">/', '<span class="mh_folding_tsub" style="font-size:' . $sum_size . ';">', $items);
+			}
+
 			$folding_info = new stdClass();
 			$folding_info->open_attr          = $open_attr;
 			$folding_info->bg_color           = $bg_color;
@@ -107,6 +138,11 @@
 			$folding_info->ver_date_attr      = htmlspecialchars($ver_date, ENT_QUOTES);
 			$folding_info->badge_attr         = htmlspecialchars($badge, ENT_QUOTES);
 			$folding_info->default_open_attr  = htmlspecialchars($default_open, ENT_QUOTES);
+			$folding_info->ver_size           = $ver_size;
+			$folding_info->date_size          = $date_size;
+			$folding_info->badge_size         = $badge_size;
+			$folding_info->sub_size           = $sub_size;
+			$folding_info->sum_size           = $sum_size;
 			$folding_info->summary_html       = $ver_display . $badge_html;
 			$folding_info->body_html          = $items;
 

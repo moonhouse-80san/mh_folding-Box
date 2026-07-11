@@ -11,3 +11,10 @@ $lang->folding_item_sum     = '내용';
 $lang->folding_open_yes     = '열림';
 $lang->folding_open_no      = '닫힘';
 $lang->folding_preview      = '미리보기';
+
+$lang->folding_font_size   = '폰트 크기';
+$lang->folding_size_ver    = '버전 크기';
+$lang->folding_size_date   = '날짜 크기';
+$lang->folding_size_badge  = '배지 크기';
+$lang->folding_size_sub    = '소제목 크기';
+$lang->folding_size_sum    = '내용 크기';
