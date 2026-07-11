@@ -11,7 +11,7 @@ var sub_drag_src = null;
 var S_NEW        = 'font-size:.8em;color:#999;border:1px solid #ddd;padding:3px 6px;border-radius:5px;margin-left:6px;';
 var S_NEW_LATEST = 'font-size:.8em;color:#fff;background:#222;border:1px solid #222;padding:3px 6px;border-radius:5px;margin-left:6px;';
 var S_BUG  = 'font-size:.8em;color:#999;border:1px solid #ddd;padding:3px 6px;border-radius:5px;margin-right:5px;';
-var S_SUB  = 'font-size:.9em;color:#555;font-weight:500 !important;';
+var S_SUB  = 'font-size:.9em;color:#555;font-weight:bold !important;';
 var S_SUM  = 'font-size:.85em;color:#666;';
 var S_DATE = 'font-size:.85em;color:#444;';
 var S_TSUB = 'font-size:.9em;color:#666;margin-left:1.5em;'; 
@@ -533,7 +533,7 @@ function getFolding() {
 					var t = sp.textContent.trim();
 					var s = sp.getAttribute('style') || '';
 					if      (s.indexOf('margin-right') !== -1)    bv = t;
-					else if (s.indexOf('font-weight:500') !== -1) sv = t;
+					else if (s.indexOf('font-weight') !== -1) sv = t;
 					else if (s.indexOf('.85em') !== -1 && s.indexOf('margin-left') === -1) uv = t;
 				});
 				/* 새 항목 추가 후 seq 추적 */
@@ -559,7 +559,7 @@ function getFolding() {
 				var t = sp.textContent.trim();
 				var s = sp.getAttribute('style') || '';
 				if      (s.indexOf('margin-right') !== -1)    bv = t;
-				else if (s.indexOf('font-weight:500') !== -1) sv = t;
+				else if (s.indexOf('font-weight') !== -1) sv = t;
 				else if (s.indexOf('.85em') !== -1)           uv = t;
 			});
 			if (sv || uv) addFoldingItem(bv, sv, uv);

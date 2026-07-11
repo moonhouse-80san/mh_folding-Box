@@ -217,7 +217,7 @@ body { font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Malgun 
 .mf_ver_date  { color: #444; }
 .mf_new       { font-size: .8em; color: #999; border: 1px solid #ddd; padding: 3px 6px; border-radius: 5px; margin-left: 6px; }
 .mf_bug       { font-size: .8em; color: #999; border: 1px solid #ddd; padding: 3px 6px; border-radius: 5px; margin-right: 5px; }
-.mf_sub       { font-size: .9em; color: #555; font-weight: 500 !important; }
+.mf_sub       { font-size: .95em; color: #555; font-weight: bold !important; }
 .mf_sum       { font-size: .9em; color: #666; }
 
 /* 버튼 영역 */

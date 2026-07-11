@@ -1,0 +1,79 @@
+@charset "UTF-8";
+
+.mh_folding_details {
+	border: 1px solid #ddd;
+	padding: 10px;
+	border-radius: 5px;
+	margin: 0 10px;
+}
+
+.mh_folding_summary {
+	cursor: pointer;
+}
+
+.mh_folding_body {
+	margin-top: 12px;
+	margin-left: 5px;
+}
+
+.mh_folding_ver {
+	font-weight: bold;
+}
+
+.mh_folding_date {
+	font-size: .85em;
+	color: #444;
+}
+
+.mh_folding_badge_new {
+	font-size: .8em;
+	color: #999;
+	border: 1px solid #ddd;
+	padding: 3px 6px;
+	border-radius: 5px;
+	margin-left: 6px;
+}
+
+.mh_folding_badge_new_latest {
+	font-size: .8em;
+	color: #fff;
+	background: #222;
+	border: 1px solid #222;
+	padding: 3px 6px;
+	border-radius: 5px;
+	margin-left: 6px;
+}
+
+.mh_folding_badge_bug {
+	font-size: .8em;
+	color: #999;
+	border: 1px solid #ddd;
+	padding: 3px 6px;
+	border-radius: 5px;
+	margin-right: 5px;
+}
+
+.mh_folding_sub {
+	font-size: .95em;
+	color: #555;
+	font-weight: 500 !important;
+}
+
+.mh_folding_sum {
+	font-size: .85em;
+	color: #666;
+}
+
+.mh_folding_item {
+	margin-bottom: 6px;
+}
+
+.mh_folding_subitem {
+	margin-bottom: 4px;
+	margin-left: 1.5em;
+}
+
+.mh_folding_tsub {
+	font-size: .9em;
+	color: #666;
+}

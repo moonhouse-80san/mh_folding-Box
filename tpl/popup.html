@@ -4,6 +4,7 @@
 
 <div class="x_modal-header">
 	<h1>{$component_info->title} ver. {$component_info->version}</h1>
+	<a class="close_window" href="javascript:window.close()">&times;</a>
 </div>
 
 <form action="./" method="get" onSubmit="return false" id="fo">
@@ -115,6 +116,7 @@
 	<div class="x_clearfix btnArea">
 		<div class="x_pull-right">
 			<a href="#" onclick="insertFolding()"><button type="button" class="x_btn x_btn-primary">{$lang->cmd_insert}</button></a>
+			<a class="x_btn" href="{getUrl('','module','editor','act','dispEditorComponentInfo','component_name',$component_info->component_name)}" target="_blank" onclick="window.open(this.href,'ComponentInfo','width=10,height=10');return false;">{$lang->about_component}</a>
 			<a href="#" onclick="window.close(); return false;"><button type="button" class="x_btn">{$lang->cmd_close}</button></a>
 		</div>
 	</div>
