@@ -24,13 +24,13 @@ function getSizeValue(id) {
 function styleBadgeNew(size)       { return 'font-size:' + (size || '.8em')  + ';color:#999;border:1px solid #ddd;padding:3px 6px;border-radius:5px;margin-left:6px;'; }
 function styleBadgeNewLatest(size) { return 'font-size:' + (size || '.8em')  + ';color:#fff;background:#222;border:1px solid #222;padding:3px 6px;border-radius:5px;margin-left:6px;'; }
 function styleBadgeBug(size)       { return 'font-size:' + (size || '.8em')  + ';color:#999;border:1px solid #ddd;padding:3px 6px;border-radius:5px;margin-right:5px;'; }
-function styleSub(size)            { return 'font-size:' + (size || '.9em')  + ';color:#555;font-weight:500 !important;'; }
-function styleSum(size)            { return 'font-size:' + (size || '.85em') + ';color:#666;'; }
-function styleDate(size)           { return 'font-size:' + (size || '.85em') + ';color:#444;'; }
-function styleTsub(size)           { return 'font-size:' + (size || '.9em')  + ';color:#666;margin-left:1.5em;'; }
+function styleSub(size, color)     { return 'font-size:' + (size || '.9em')  + ';color:' + (color || '#555555') + ';font-weight:500 !important;'; }
+function styleSum(size, color)     { return 'font-size:' + (size || '.85em') + ';color:' + (color || '#666666') + ';'; }
+function styleDate(size, color)           { return 'font-size:' + (size || '.85em') + ';color:' + (color || '#444444') + ';'; }
+function styleTsub(size, color)    { return 'font-size:' + (size || '.9em')  + ';color:' + (color || '#666666') + ';margin-left:1.5em;'; }
 
-function makeDetailsStyle(bgColor) {
-	return 'border:1px solid #ddd;background:' + (bgColor || '#f9f9f9') + ';padding:10px;border-radius:5px;margin:0 10px;';
+function makeDetailsStyle(bgColor, fontColor) {
+	return 'border:1px solid #ddd;background:' + (bgColor || '#f9f9f9') + ';color:' + (fontColor || '#444444') + ';padding:10px;border-radius:5px;margin:0 10px;';
 }
 
 function dateToDisplay(val) {
@@ -327,10 +327,11 @@ function buildItemsHtml() {
 	var badgeSize = getSizeValue('folding_badge_size');
 	var subSize   = getSizeValue('folding_sub_size');
 	var sumSize   = getSizeValue('folding_sum_size');
+	var fontColor = xGetElementById('folding_font_color').value || '#444444';
 	var bugStyle  = styleBadgeBug(badgeSize);
-	var subStyle  = styleSub(subSize);
-	var sumStyle  = styleSum(sumSize);
-	var tsubStyle = styleTsub(sumSize);
+	var subStyle  = styleSub(subSize, fontColor);
+	var sumStyle  = styleSum(sumSize, fontColor);
+	var tsubStyle = styleTsub(sumSize, fontColor);
 
 	var html = '';
 	document.querySelectorAll('#item-list > .folding-item').forEach(function(wrap) {
@@ -344,8 +345,9 @@ function buildItemsHtml() {
 		if (badge) html += '<span style="' + bugStyle + '">' + escText(badge) + '</span>';
 		if (sub) {
 			html += '<span style="' + subStyle + '">' + escText(sub) + '</span>';
-			html += ' - <span style="' + sumStyle + '">' + escText(sum) + '</span>';
-		} else {
+			if (sum) html += ' — ';
+		}
+		if (sum) {
 			html += '<span style="' + sumStyle + '">' + escText(sum) + '</span>';
 		}
 		html += '</div>';
@@ -365,9 +367,9 @@ function buildItemsHtml() {
 	return html;
 }
 
-function buildSummaryHtml(ver, ver_date_display, badge, verColor, verSize, dateSize, badgeSize) {
+function buildSummaryHtml(ver, ver_date_display, badge, verColor, verSize, dateSize, badgeSize, fontColor) {
 	var S_VER = 'font-size:' + (verSize || '1em') + ';font-weight:bold;color:' + (verColor || '#2980b9') + ';';
-	var dateStyle = styleDate(dateSize);
+	var dateStyle = styleDate(dateSize, fontColor);
 	var html = '';
 	if (ver)              html += '<span style="' + S_VER + '">Ver ' + escText(ver) + '</span>';
 	if (ver_date_display) html += '<span style="' + dateStyle + '"> - ' + escText(ver_date_display) + '</span>';
@@ -390,6 +392,7 @@ function updatePreview() {
 	var ver_color    = xGetElementById('folding_ver_color').value    || '#2980b9';
 	var marker_color = xGetElementById('folding_marker_color').value || '#ff6600';
 	var bg_color     = xGetElementById('folding_bg_color').value     || '#f9f9f9';
+	var font_color   = xGetElementById('folding_font_color').value   || '#444444';
 	var badge        = getBadgeValue();
 	var def_open     = document.querySelector('input[name="default_open"]:checked');
 	var open_attr    = (def_open && def_open.value === 'Y') ? ' open' : '';
@@ -404,8 +407,8 @@ function updatePreview() {
 		+ '</style>';
 
 	var html = marker_style
-		+ '<details style="' + makeDetailsStyle(bg_color) + '"' + open_attr + '>'
-		+ '<summary>' + buildSummaryHtml(ver, ver_date_disp, badge, ver_color, ver_size, date_size, badge_size) + '</summary>'
+		+ '<details style="' + makeDetailsStyle(bg_color, font_color) + '"' + open_attr + '>'
+		+ '<summary>' + buildSummaryHtml(ver, ver_date_disp, badge, ver_color, ver_size, date_size, badge_size, font_color) + '</summary>'
 		+ '<div style="margin-top:12px;margin-left:5px">'
 		+ (buildItemsHtml() || '<em style="color:#aaa">항목을 추가하세요</em>')
 		+ '</div></details>';
@@ -420,6 +423,7 @@ function buildFoldingHTML(orig_node) {
 	var ver_color    = xGetElementById('folding_ver_color').value    || '#2980b9';
 	var marker_color = xGetElementById('folding_marker_color').value || '#ff6600';
 	var bg_color     = xGetElementById('folding_bg_color').value     || '#f9f9f9';
+	var font_color   = xGetElementById('folding_font_color').value   || '#444444';
 	var badge        = getBadgeValue();
 	var def_open_el  = document.querySelector('input[name="default_open"]:checked');
 	var default_open = def_open_el ? def_open_el.value : 'Y';
@@ -475,13 +479,14 @@ function buildFoldingHTML(orig_node) {
 	}
 
 	return '<details'
-		+ ' style="' + makeDetailsStyle(bg_color) + '"'
+		+ ' style="' + makeDetailsStyle(bg_color, font_color) + '"'
 		+ ' editor_component="mh_folding"'
 		+ ' ver="' + escText(ver) + '"'
 		+ ' ver_date="' + escText(ver_date_disp) + '"'
 		+ ' ver_color="' + escText(ver_color) + '"'
 		+ ' marker_color="' + escText(marker_color) + '"'
 		+ ' bg_color="' + escText(bg_color) + '"'
+		+ ' font_color="' + escText(font_color) + '"'
 		+ ' badge="' + escText(badge) + '"'
 		+ ' default_open="' + default_open + '"'
 		+ ' ver_size="' + escText(ver_size) + '"'
@@ -491,7 +496,7 @@ function buildFoldingHTML(orig_node) {
 		+ ' sum_size="' + escText(sum_size) + '"'
 		+ open_attr + '>'
 		+ '<summary style="' + summary_style + '">'
-		+ buildSummaryHtml(ver, ver_date_disp, badge, ver_color, ver_size, date_size, badge_size)
+		+ buildSummaryHtml(ver, ver_date_disp, badge, ver_color, ver_size, date_size, badge_size, font_color)
 		+ '</summary>'
 		+ '<div style="margin-top:12px;margin-left:5px">' + body_html + '</div>'
 		+ '</details>';
@@ -539,12 +544,15 @@ function getFolding() {
 	var vc = node.getAttribute('ver_color')    || '#2980b9';
 	var mc = node.getAttribute('marker_color') || '#ff6600';
 	var bc = node.getAttribute('bg_color')     || '#f9f9f9';
+	var fc = node.getAttribute('font_color')   || '#444444';
 	xGetElementById('folding_ver_color').value        = vc;
 	xGetElementById('folding_ver_color_hex').value    = vc;
 	xGetElementById('folding_marker_color').value     = mc;
 	xGetElementById('folding_marker_color_hex').value = mc;
 	xGetElementById('folding_bg_color').value         = bc;
 	xGetElementById('folding_bg_color_hex').value     = bc;
+	xGetElementById('folding_font_color').value        = fc;
+	xGetElementById('folding_font_color_hex').value    = fc;
 
 	xGetElementById('folding_ver_size').value   = node.getAttribute('ver_size')   || '';
 	xGetElementById('folding_date_size').value  = node.getAttribute('date_size')  || '';
@@ -630,6 +638,7 @@ function getFolding() {
 		bindColorPair('folding_ver_color',    'folding_ver_color_hex');
 		bindColorPair('folding_marker_color', 'folding_marker_color_hex');
 		bindColorPair('folding_bg_color',     'folding_bg_color_hex');
+		bindColorPair('folding_font_color',   'folding_font_color_hex');
 
 		/* 최신 배지 체크 여부에 따라 색상 자동 전환 */
 		function applyLatestColors() {

@@ -39,6 +39,7 @@
 			$ver_color    = $this->safeColor($xml_obj->attrs->ver_color    ?? '', '#2980b9');
 			$marker_color = $this->safeColor($xml_obj->attrs->marker_color ?? '', '#ff6600');
 			$bg_color     = $this->safeColor($xml_obj->attrs->bg_color     ?? '', '#f9f9f9');
+			$font_color   = $this->safeColor($xml_obj->attrs->font_color   ?? '', '#444444');
 			$badge        = $xml_obj->attrs->badge        ?? '';
 			$default_open = $xml_obj->attrs->default_open ?? 'Y';
 			$items        = $xml_obj->body                ?? '';
@@ -60,8 +61,9 @@
 				$ver_display .= '<span class="mh_folding_ver" style="' . $ver_style . '">Ver ' . htmlspecialchars($ver, ENT_QUOTES) . '</span>';
 			}
 			if ($ver_date) {
-				$date_style = $date_size ? ' style="font-size:' . $date_size . ';"' : '';
-				$ver_display .= '<span class="mh_folding_date"' . $date_style . '>' . htmlspecialchars($ver_date, ENT_QUOTES) . '</span>';
+				$date_style = 'color:' . $font_color . ';';
+				if ($date_size) $date_style .= 'font-size:' . $date_size . ';';
+				$ver_display .= '<span class="mh_folding_date" style="' . $date_style . '">' . htmlspecialchars($ver_date, ENT_QUOTES) . '</span>';
 			}
 
 			/* 배지 표시 */
@@ -119,19 +121,23 @@
 			if ($badge_size) {
 				$items = preg_replace('/<span class="mh_folding_badge_bug">/', '<span class="mh_folding_badge_bug" style="font-size:' . $badge_size . ';">', $items);
 			}
-			if ($sub_size) {
-				$items = preg_replace('/<span class="mh_folding_sub">/', '<span class="mh_folding_sub" style="font-size:' . $sub_size . ';">', $items);
-				$items = preg_replace('/<strong class="mh_folding_sub">/', '<strong class="mh_folding_sub" style="font-size:' . $sub_size . ';">', $items);
-			}
-			if ($sum_size) {
-				/* '내용' 크기는 소제목 없는 요약문(sum)과 Sub내용(tsub)에 공통 적용 */
-				$items = preg_replace('/<span class="mh_folding_sum">/', '<span class="mh_folding_sum" style="font-size:' . $sum_size . ';">', $items);
-				$items = preg_replace('/<span class="mh_folding_tsub">/', '<span class="mh_folding_tsub" style="font-size:' . $sum_size . ';">', $items);
-			}
+			/* 소제목/내용/Sub내용은 크기 지정 여부와 상관없이 색상은 항상 font_color를 따라간다
+			 * (배경색을 어둡게 바꿔도 회색 고정 글자색 때문에 안 보이는 문제 방지) */
+			$sub_style = 'color:' . $font_color . ';';
+			if ($sub_size) $sub_style .= 'font-size:' . $sub_size . ';';
+			$items = preg_replace('/<span class="mh_folding_sub">/', '<span class="mh_folding_sub" style="' . $sub_style . '">', $items);
+			$items = preg_replace('/<strong class="mh_folding_sub">/', '<strong class="mh_folding_sub" style="' . $sub_style . '">', $items);
+
+			/* '내용' 색상/크기는 소제목 없는 요약문(sum)과 Sub내용(tsub)에 공통 적용 */
+			$sum_style = 'color:' . $font_color . ';';
+			if ($sum_size) $sum_style .= 'font-size:' . $sum_size . ';';
+			$items = preg_replace('/<span class="mh_folding_sum">/', '<span class="mh_folding_sum" style="' . $sum_style . '">', $items);
+			$items = preg_replace('/<span class="mh_folding_tsub">/', '<span class="mh_folding_tsub" style="' . $sum_style . '">', $items);
 
 			$folding_info = new stdClass();
 			$folding_info->open_attr          = $open_attr;
 			$folding_info->bg_color           = $bg_color;
+			$folding_info->font_color         = $font_color;
 			$folding_info->marker_color       = $marker_color;
 			$folding_info->ver_color          = $ver_color;
 			$folding_info->ver_attr           = htmlspecialchars($ver, ENT_QUOTES);

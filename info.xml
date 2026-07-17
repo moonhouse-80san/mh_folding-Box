@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component version="0.5">
+<component version="0.6">
 	<title xml:lang="ko">접기/펼치기 박스</title>
 	<title xml:lang="en">Folding Box</title>
-	<version>0.5</version>
-	<date>2026-07-10</date>
+	<version>0.6</version>
+	<date>2026-07-17</date>
 	<author email_address="80san@moonhouse.co.kr" link="https://moonhouse.co.kr">
 		<name xml:lang="ko">팔공산</name>
 		<name xml:lang="en">80san</name>
